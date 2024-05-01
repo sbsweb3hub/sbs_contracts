@@ -10,9 +10,13 @@ contract Ordering {
     address public getFundForProjectAddr;
     ICreateProject createProject_contract; // взаимодействие в Главным контрактом
 
-    constructor(address _createProject_contract, address _blastPointsAddress) {
+    constructor(
+        address _createProject_contract,
+        address _blastPointsAddress,
+        address _operator
+    ) {
         owner = msg.sender;
-        IBlastPoints(_blastPointsAddress).configurePointsOperator(owner);
+        IBlastPoints(_blastPointsAddress).configurePointsOperator(_operator);
         createProject_contract = ICreateProject(_createProject_contract);
     }
 
