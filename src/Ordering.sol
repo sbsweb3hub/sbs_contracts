@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import "./ICreateProject.sol";
 import {IBlastPoints} from "./IBlastPoints.sol";
+import {IBlast} from "./IBlast.sol";
 
 contract Ordering {
     address public owner;
@@ -17,6 +18,10 @@ contract Ordering {
         address _operator
     ) {
         owner = msg.sender;
+        IBlast blastYieldContract = IBlast(
+            0x4300000000000000000000000000000000000002
+        );
+        blastYieldContract.configureAutomaticYield();
         IBlastPoints(_blastPointsAddress).configurePointsOperator(_operator);
         createProject_contract = ICreateProject(_createProject_contract);
     }
