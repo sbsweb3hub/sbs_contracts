@@ -6,6 +6,7 @@ import {IBlastPoints} from "./IBlastPoints.sol";
 
 contract Ordering {
     address public owner;
+    address private operator; //blast points operator
     address public claimableAddr;
     address public getFundForProjectAddr;
     ICreateProject createProject_contract; // взаимодействие в Главным контрактом
@@ -23,6 +24,18 @@ contract Ordering {
     modifier onlyOwner() {
         require(msg.sender == owner, "Only an owner");
         _;
+    }
+
+    function changeBlastPointsOperator(
+        address _blastPointsAddress,
+        address _newOperator
+    ) external {
+        require(msg.sender == operator, "Only an operator");
+        operator = _newOperator;
+        IBlastPoints(_blastPointsAddress).configurePointsOperatorOnBehalf(
+            address(this),
+            _newOperator
+        );
     }
 
     function setNewOwner(address _newOwner) public onlyOwner {
