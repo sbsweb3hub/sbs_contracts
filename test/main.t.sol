@@ -6,11 +6,27 @@ import {Test, console} from "forge-std/Test.sol";
 import {ProjectsKeeper} from "../src/ProjectsKeeper.sol";
 import {CreateProject} from "../src/CreateProject.sol";
 import {StartFunds} from "../src/StartFunds.sol";
+import {Ordering} from "../src/Ordering.sol";
+import {IBlastPoints} from "../src/IBlastPoints.sol";
+import {GetFundForProject} from "../src/GetFundForProject.sol";
+import {Claiming} from "../src/Claiming.sol";
+import {Voting} from "../src/Voting.sol";
 
 contract CreateProjectTest is Test {
+    // BlastPoints Testnet address: 0x2fc95838c71e76ec69ff817983BFf17c710F34E0
+    // BlastPoints Mainnet address: 0x2536FE9ab3F511540F2f9e2eC2A805005C3Dd800
+    IBlastPoints public constant blastPointsAddress =
+        IBlastPoints(0x2fc95838c71e76ec69ff817983BFf17c710F34E0);
     ProjectsKeeper public projectKeeper;
     CreateProject public createProject;
     StartFunds public startFunds;
+    Ordering public ordering;
+    GetFundForProject public getFundForProject;
+    Claiming public claiming;
+    Voting public voting;
+
+    address operator = makeAddr("operator");
+    address alice = makeAddr("alice");
 
     string _projectName = "SBS launchpad";
     string _projectSymbol = "SBS";
@@ -25,11 +41,36 @@ contract CreateProjectTest is Test {
         projectKeeper = new ProjectsKeeper();
         createProject = new CreateProject(address(projectKeeper));
         startFunds = new StartFunds(address(createProject));
+        // BlastPoints Testnet address: 0x2fc95838c71e76ec69ff817983BFf17c710F34E0
+        // BlastPoints Mainnet address: 0x2536FE9ab3F511540F2f9e2eC2A805005C3Dd800
+        ordering = new Ordering(
+            address(createProject),
+            address(blastPointsAddress),
+            address(operator)
+        );
+        getFundForProject = new GetFundForProject(
+            address(createProject),
+            address(ordering)
+        );
+        claiming = new Claiming(address(createProject), address(ordering));
+        voting = new Voting(address(createProject), address(ordering));
 
+        projectKeeper.setCreatorContractAddr(address(createProject));
+        createProject.setAllowedAddrs(
+            address(startFunds),
+            address(claiming),
+            address(getFundForProject),
+            address(ordering),
+            address(voting)
+        );
+        ordering.setClaimableAddrs(
+            address(claiming),
+            address(getFundForProject)
+        );
         // Fill timeSteps
         _timeSteps = new uint[](_amountSteps);
         for (uint i = 0; i < _amountSteps; i++) {
-            _timeSteps[i] = 60;
+            _timeSteps[i] = 60 seconds;
         }
     }
 
@@ -47,6 +88,7 @@ contract CreateProjectTest is Test {
     }
 
     function test_startProject() public {
+        vm.startPrank(alice, alice);
         (uint32 idMain, , ) = createProject.create(
             _projectName,
             _projectSymbol,
@@ -57,7 +99,7 @@ contract CreateProjectTest is Test {
             _amountSteps,
             _timeSteps
         );
-        vm.prank(address(this));
         startFunds.start(idMain);
+        vm.stopPrank();
     }
 }
