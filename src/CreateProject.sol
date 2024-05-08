@@ -90,13 +90,8 @@ contract CreateProject is
         return (idMain, idPrice, idSteps);
     }
 
-    function ownerOfProject(uint32 _projectId) external view returns (bool) {
-        CreateMain memory project = getProjectMain[_projectId];
-        if (project.owner == tx.origin) {
-            return true;
-        } else {
-            return false;
-        }
+    function ownerOfProject(uint32 _projectId) external view returns (address) {
+        return getProjectMain[_projectId].owner;
     }
 
     // чтобы избежать случая когда проект провел удачный Сэйл и не забрал первый транш, (что ведет к блокировке средств на смарте)
