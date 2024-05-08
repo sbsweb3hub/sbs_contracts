@@ -34,11 +34,29 @@ contract CreateProjectTest is Test {
     }
 
     function test_createProject() public {
-        createProject.create(_projectName, _projectSymbol, _maxTokenSupply, _minTokenSale, _price, _publicSale, _amountSteps, _timeSteps);
+        createProject.create(
+            _projectName,
+            _projectSymbol,
+            _maxTokenSupply,
+            _minTokenSale,
+            _price,
+            _publicSale,
+            _amountSteps,
+            _timeSteps
+        );
     }
 
     function test_startProject() public {
-        (uint32 idMain, , ) = createProject.create(_projectName, _projectSymbol, _maxTokenSupply, _minTokenSale, _price, _publicSale, _amountSteps, _timeSteps);
+        (uint32 idMain, , ) = createProject.create(
+            _projectName,
+            _projectSymbol,
+            _maxTokenSupply,
+            _minTokenSale,
+            _price,
+            _publicSale,
+            _amountSteps,
+            _timeSteps
+        );
         vm.prank(address(this));
         startFunds.start(idMain);
     }
