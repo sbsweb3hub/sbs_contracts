@@ -42,8 +42,8 @@ contract GetFundForProject {
 
     // поочередное получение проектом всех траншей
     function getNextFund(uint32 _projectId) public reentrancyGuard {
-        bool isOwner = createProject_contract.ownerOfProject(_projectId);
-        require(isOwner, "You are not an owner");
+        address _owner = createProject_contract.ownerOfProject(_projectId);
+        require(msg.sender == _owner, "You are not an owner");
         uint8 stepIsLive = createProject_contract.witchStepAlive(_projectId);
 
         (
@@ -137,7 +137,6 @@ contract GetFundForProject {
         (ProjectToken projectContract, , , ) = createProject_contract
             .projectsViewMain(_projectId);
 
-        bool isOwner = createProject_contract.ownerOfProject(_projectId);
         uint allProjectTokens = maxTokenSupply - publicSale;
 
         if (msg.sender == owner) {
@@ -146,7 +145,8 @@ contract GetFundForProject {
             projectContract.mint(owner, allProjectTokens);
             emit sendAllProjectTokensToSBS(owner, allProjectTokens);
         } else {
-            require(isOwner, "You are not an owner");
+            address _owner = createProject_contract.ownerOfProject(_projectId);
+            require(msg.sender == _owner, "You are not an owner");
             require(isProjectAlive, "Project is over!");
             require(tokenSupply >= minTokenSale, "Sale isn't good");
             createProject_contract.setGettingAllTokens(_projectId);

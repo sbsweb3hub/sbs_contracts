@@ -15,7 +15,7 @@ interface ICreateProject {
         uint[] memory _timeSteps
     ) external returns (uint32, uint32, uint32);
 
-    function ownerOfProject(uint32 projectId) external view returns (bool);
+    function ownerOfProject(uint32 projectId) external view returns (address);
 
     function isPublicSale(uint32 projectId) external view returns (bool);
 

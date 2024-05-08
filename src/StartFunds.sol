@@ -14,8 +14,8 @@ contract StartFunds {
     // формирование массива с датами каждого этапа через if
 
     function start(uint32 _projectId) public {
-        bool isOwner = createProject_contract.ownerOfProject(_projectId);
-        require(isOwner, "You are not an owner");
+        address _owner = createProject_contract.ownerOfProject(_projectId);
+        require(msg.sender == _owner, "You are not an owner");
         (
             uint8 amountSteps,
             uint[] memory timeSteps,
