@@ -26,13 +26,15 @@ contract CreateProjectTest is Test {
     Voting public voting;
 
     address operator = makeAddr("operator");
-    address alice = makeAddr("alice");
+    address founder1 = makeAddr("founder1");
+    address investor1 = makeAddr("investor1");
+    address investor2 = makeAddr("investor2");
 
     string _projectName = "SBS launchpad";
     string _projectSymbol = "SBS";
     uint _maxTokenSupply = 1000;
     uint _minTokenSale = 100;
-    uint _price = 10;
+    uint _price = 1 ether;
     uint _publicSale = 200;
     uint8 _amountSteps = 4;
     uint[] _timeSteps;
@@ -74,8 +76,8 @@ contract CreateProjectTest is Test {
         }
     }
 
-    function test_createProject() public {
-        createProject.create(
+    function createProjectCall() public returns (uint32 x, uint32 y, uint32 z) {
+        (x, y, z) = createProject.create(
             _projectName,
             _projectSymbol,
             _maxTokenSupply,
@@ -87,19 +89,44 @@ contract CreateProjectTest is Test {
         );
     }
 
+    function test_createProject() public {
+        createProjectCall();
+    }
+
     function test_startProject() public {
-        vm.startPrank(alice, alice);
-        (uint32 idMain, , ) = createProject.create(
-            _projectName,
-            _projectSymbol,
-            _maxTokenSupply,
-            _minTokenSale,
-            _price,
-            _publicSale,
-            _amountSteps,
-            _timeSteps
-        );
-        startFunds.start(idMain);
+        vm.startPrank(founder1, founder1);
+        (uint32 id, , ) = createProjectCall();
+        startFunds.start(id);
+        vm.stopPrank();
+    }
+
+    function test_startOrdering() public {
+        vm.startPrank(founder1, founder1);
+        vm.deal(founder1, 1 ether);
+        (uint32 id, , ) = createProjectCall();
+        startFunds.start(id);
+        ordering.order{value: 1 ether}(id);
+        vm.stopPrank();
+    }
+
+    function test_MoneyFromInvestor() public {
+        vm.startPrank(founder1, founder1);
+        (uint32 id, , ) = createProjectCall();
+        startFunds.start(id);
+        vm.stopPrank();
+
+        vm.startPrank(investor1, investor1);
+        vm.deal(investor1, 1 ether);
+        ordering.order{value: 1 ether}(id);
+        (uint invested1, uint all1) = ordering.getRecievedMoneyFromInvestor(id);
+        assertEq(invested1, all1, "err");
+        vm.stopPrank();
+
+        vm.startPrank(investor2, investor2);
+        vm.deal(investor2, 1 ether);
+        ordering.order{value: 1 ether}(id);
+        (uint invested2, uint all2) = ordering.getRecievedMoneyFromInvestor(id);
+        assertEq(invested1 + invested2, all2, "err");
         vm.stopPrank();
     }
 }

@@ -222,6 +222,11 @@ contract Ordering {
         emit SBSFund(_projectId, _onwerProject, _sbsFundForProject);
     }
 
+    function getRecievedMoneyFromInvestor(uint32 _projectId) public view returns(uint invested, uint all) {
+        invested = recievedMoneyFromInvestor[_projectId][msg.sender];
+        all = address(this).balance;
+    }
+
     fallback() external payable {}
 
     receive() external payable {}
