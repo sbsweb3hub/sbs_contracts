@@ -10,14 +10,12 @@ contract ProjectsKeeper {
     }
 
     modifier onlyOwner() {
-        require(msg.sender == owner, "Only an owner");
+        require(msg.sender == owner, 'Only an owner');
         _;
     }
+
     modifier onlyApproved() {
-        require(
-            msg.sender == owner || msg.sender == creatorContractAddr,
-            "Only owner/approved!"
-        );
+        require(msg.sender == owner || msg.sender == creatorContractAddr, 'Only owner/approved!');
         _;
     }
 
@@ -32,22 +30,15 @@ contract ProjectsKeeper {
     }
 
     // установка главного адреса, чтобы можно было через него делать транзы
-    function setCreatorContractAddr(
-        address _creatorContractAddr
-    ) public onlyOwner {
+    function setCreatorContractAddr(address _creatorContractAddr) public onlyOwner {
         creatorContractAddr = _creatorContractAddr;
     }
 
-    function getArrOfCreator(
-        address _creator
-    ) public view returns (uint32[] memory) {
+    function getArrOfCreator(address _creator) public view returns (uint32[] memory) {
         return projects[_creator];
     }
 
-    function deleteProject(
-        uint32 _projectId,
-        address _creator
-    ) public onlyApproved {
+    function deleteProject(uint32 _projectId, address _creator) public onlyApproved {
         uint32[] memory arr = projects[_creator];
         uint length = arr.length;
 
@@ -56,10 +47,7 @@ contract ProjectsKeeper {
         projects[_creator].pop();
     }
 
-    function indexOfProject(
-        uint32[] memory _arrProjectIds,
-        uint32 _projectId
-    ) internal pure returns (uint) {
+    function indexOfProject(uint32[] memory _arrProjectIds, uint32 _projectId) internal pure returns (uint) {
         uint length = _arrProjectIds.length;
 
         for (uint i = 0; i < length; i++) {

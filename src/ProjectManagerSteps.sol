@@ -27,26 +27,18 @@ contract ProjectManagerSteps {
         address _startAddr,
         address _orderingAddr,
         address _tokensMainForProjectAddr
-    ) internal {
+    )
+        internal
+    {
         startAddr = _startAddr;
         orderingAddrStep = _orderingAddr;
         tokensForProjectAddrStep = _tokensMainForProjectAddr;
     }
 
-    function projectsViewSteps(
-        uint32 projectId
-    )
+    function projectsViewSteps(uint32 projectId)
         public
         view
-        returns (
-            uint8,
-            uint[] memory,
-            uint[] memory,
-            uint[] memory,
-            bool[] memory,
-            uint,
-            bool
-        )
+        returns (uint8, uint[] memory, uint[] memory, uint[] memory, bool[] memory, uint, bool)
     {
         CreateSteps memory project = getProjectSteps[projectId];
         return (
@@ -60,14 +52,8 @@ contract ProjectManagerSteps {
         );
     }
 
-    function createProjectSteps(
-        uint8 _amountSteps,
-        uint[] memory _timeSteps
-    ) internal returns (uint32) {
-        require(
-            _amountSteps >= 3 && _timeSteps.length >= 3,
-            "Need three or more steps!"
-        );
+    function createProjectSteps(uint8 _amountSteps, uint[] memory _timeSteps) internal returns (uint32) {
+        require(_amountSteps >= 3 && _timeSteps.length >= 3, 'Need three or more steps!');
         CreateSteps memory project = CreateSteps({
             amountSteps: _amountSteps,
             timeSteps: _timeSteps,
@@ -93,8 +79,10 @@ contract ProjectManagerSteps {
         bool[] memory _isStepsPerProject,
         uint _startTime,
         bool _isPublicSale
-    ) external {
-        require(msg.sender == startAddr, "Not allowed");
+    )
+        external
+    {
+        require(msg.sender == startAddr, 'Not allowed');
         getProjectSteps[_projectIdSteps] = CreateSteps({
             amountSteps: _amountSteps,
             timeSteps: _timeSteps,
@@ -106,22 +94,14 @@ contract ProjectManagerSteps {
         });
     }
 
-    function orderSteps(
-        uint32 _projectIdSteps,
-        bool[] memory _isStepsPerProject
-    ) external {
-        require(msg.sender == orderingAddrStep, "Not allowed");
+    function orderSteps(uint32 _projectIdSteps, bool[] memory _isStepsPerProject) external {
+        require(msg.sender == orderingAddrStep, 'Not allowed');
         getProjectSteps[_projectIdSteps].isStepsPerProject = _isStepsPerProject;
     }
 
-    function updateAfterSBSFund(
-        uint32 _projectIdSteps,
-        uint8 _stepIsLive
-    ) external {
-        require(msg.sender == tokensForProjectAddrStep, "Not allowed");
+    function updateAfterSBSFund(uint32 _projectIdSteps, uint8 _stepIsLive) external {
+        require(msg.sender == tokensForProjectAddrStep, 'Not allowed');
         getProjectSteps[_projectIdSteps].isStepsPerProject[_stepIsLive] = false;
-        getProjectSteps[_projectIdSteps].isStepsPerProject[
-            _stepIsLive + 1
-        ] = true;
+        getProjectSteps[_projectIdSteps].isStepsPerProject[_stepIsLive + 1] = true;
     }
 }

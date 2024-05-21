@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "./ICreateProject.sol";
+import './ICreateProject.sol';
 
 contract StartFunds {
     ICreateProject createProject_contract; // взаимодействие в Главным контрактом
@@ -15,7 +15,7 @@ contract StartFunds {
 
     function start(uint32 _projectId) public {
         address _owner = createProject_contract.ownerOfProject(_projectId);
-        require(msg.sender == _owner, "You are not an owner");
+        require(msg.sender == _owner, 'You are not an owner');
         (
             uint8 amountSteps,
             uint[] memory timeSteps,
@@ -26,7 +26,7 @@ contract StartFunds {
             bool isPublicSale
         ) = createProject_contract.projectsViewSteps(_projectId);
 
-        require(!isPublicSale, "The funding has already been launched!");
+        require(!isPublicSale, 'The funding has already been launched!');
 
         uint startTime = block.timestamp;
         uint localTime;
@@ -44,14 +44,7 @@ contract StartFunds {
         }
 
         createProject_contract.updateSteps(
-            _projectId,
-            amountSteps,
-            timeSteps,
-            rewardTimePerStep,
-            dateSteps,
-            isStepsPerProject,
-            startTime,
-            true
+            _projectId, amountSteps, timeSteps, rewardTimePerStep, dateSteps, isStepsPerProject, startTime, true
         );
     }
 }

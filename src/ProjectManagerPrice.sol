@@ -16,7 +16,9 @@ contract ProjectManagerPrice {
         bool isPrijectGetAllTokens; // получил ли проект все свои токены после завершения работы
         uint fundsForProject; // общее кол-во средств для проекта
     }
+
     event ProjectCreatedPrice(CreatePrice project);
+
     uint32 public projectIdPrice = 1;
 
     mapping(uint32 => CreatePrice) getProjectPrice;
@@ -25,15 +27,15 @@ contract ProjectManagerPrice {
         address _orderingAddr,
         address _votingAddr,
         address _tokensMainForProjectAddr
-    ) internal {
+    )
+        internal
+    {
         orderingAddr = _orderingAddr;
         votingAddr = _votingAddr;
         tokensMainForProjectAddr = _tokensMainForProjectAddr;
     }
 
-    function projectsViewPrice(
-        uint32 projectId
-    ) public view returns (uint, uint, uint, uint, uint, bool, bool, uint) {
+    function projectsViewPrice(uint32 projectId) public view returns (uint, uint, uint, uint, uint, bool, bool, uint) {
         CreatePrice memory project = getProjectPrice[projectId];
         return (
             project.tokenSupply,
@@ -52,7 +54,10 @@ contract ProjectManagerPrice {
         uint _minTokenSale,
         uint _price,
         uint _publicSale
-    ) internal returns (uint32) {
+    )
+        internal
+        returns (uint32)
+    {
         CreatePrice memory project = CreatePrice({
             tokenSupply: 0,
             maxTokenSupply: _maxTokenSupply,
@@ -70,23 +75,19 @@ contract ProjectManagerPrice {
         return projectIdPrice - 1;
     }
 
-    function orderPrice(
-        uint32 _projectIdPrice,
-        uint _tokenSupply,
-        uint _fundsForProject
-    ) external {
-        require(msg.sender == orderingAddr, "Not allowed");
+    function orderPrice(uint32 _projectIdPrice, uint _tokenSupply, uint _fundsForProject) external {
+        require(msg.sender == orderingAddr, 'Not allowed');
         getProjectPrice[_projectIdPrice].tokenSupply = _tokenSupply;
         getProjectPrice[_projectIdPrice].fundsForProject = _fundsForProject;
     }
 
     function closeProject(uint32 _projectIdPrice) external {
-        require(msg.sender == votingAddr, "Not allowed");
+        require(msg.sender == votingAddr, 'Not allowed');
         getProjectPrice[_projectIdPrice].isProjectAlive = false;
     }
 
     function setGettingAllTokens(uint32 _projectIdPrice) external {
-        require(msg.sender == tokensMainForProjectAddr, "Not allowed");
+        require(msg.sender == tokensMainForProjectAddr, 'Not allowed');
         getProjectPrice[_projectIdPrice].isPrijectGetAllTokens = true;
     }
 }

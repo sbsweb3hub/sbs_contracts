@@ -7,23 +7,14 @@ interface IOrdering {
         uint _sbsFundForProject,
         uint _sbsFeeReward,
         address _onwerProject
-    ) external;
+    )
+        external;
 
-    function getUserOrderedTokens(
-        uint32 _projectId,
-        address _user
-    ) external view returns (uint);
+    function getUserOrderedTokens(uint32 _projectId, address _user) external view returns (uint);
 
     function setZeroOrderedTokens(uint32 _projectId, address _user) external;
 
-    function getTokensAlreadyClaimed(
-        uint32 _projectId,
-        address _user
-    ) external view returns (uint);
+    function getTokensAlreadyClaimed(uint32 _projectId, address _user) external view returns (uint);
 
-    function setTokensAlreadyClaimed(
-        uint32 _projectId,
-        address _user,
-        uint _amount
-    ) external;
+    function setTokensAlreadyClaimed(uint32 _projectId, address _user, uint _amount) external;
 }
