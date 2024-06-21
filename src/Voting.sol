@@ -14,7 +14,7 @@ contract Voting {
     }
 
     // голосование за каждый этап, начиная со 2-го, т.к. 1-й прошел после удачного сбора средств
-    uint32 votingTime = 300; // 604800; // 7 days
+    uint32 votingTime = 604800; // 7 days
     uint8 negativeShare = 51; // 51% против, чтобы проект перестал получать финансирование
     mapping(uint32 => mapping(uint8 => uint)) public projectStepsResultVoting; // результаты прохождения этапов, сколько голосов против, начиная с 2: (т.к. 0: паблик, 1: 1-я работа)
     mapping(uint32 => mapping(uint8 => mapping(address => bool)))

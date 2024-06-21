@@ -74,7 +74,7 @@ contract GetFundForProject {
             "You've already got all your funds!"
         ); // уточнить эту проверку
 
-        uint32 votingTime = 300; // 604800;
+        uint32 votingTime = 604800;
         if (stepIsLive == 1) {
             require(
                 (block.timestamp < dateSteps[1] && tokenSupply == publicSale) ||

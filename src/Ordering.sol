@@ -122,7 +122,7 @@ contract Ordering {
             uint fundsForProject
         ) = createProject_contract.projectsViewPrice(_projectId);
 
-        uint _amount = msg.value / price;
+        uint _amount = msg.value * 10 ** 18 / price;
         uint _maxPerTx = (publicSale / 100) * 10; // 10% от максимального сейла, чтобы дать многим шанс купить
         require(_amount <= _maxPerTx, "Too much per tx"); // не больше 10% за транзакцию
         require(tokenSupply + _amount <= publicSale, "Too much");
