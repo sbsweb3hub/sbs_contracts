@@ -18,9 +18,9 @@ contract StartFunds {
         require(msg.sender == _owner, "You are not an owner");
         (
             uint8 amountSteps,
-            uint[] memory timeSteps,
-            uint[] memory rewardTimePerStep,
-            uint[] memory dateSteps,
+            uint256[] memory timeSteps,
+            uint256[] memory rewardTimePerStep,
+            uint256[] memory dateSteps,
             bool[] memory isStepsPerProject,
             ,
             bool isPublicSale
@@ -28,8 +28,8 @@ contract StartFunds {
 
         require(!isPublicSale, "The funding has already been launched!");
 
-        uint startTime = block.timestamp;
-        uint localTime;
+        uint256 startTime = block.timestamp;
+        uint256 localTime;
         for (uint8 i = 0; i <= amountSteps; i++) {
             if (i == 0) {
                 localTime = block.timestamp;
@@ -44,14 +44,7 @@ contract StartFunds {
         }
 
         createProject_contract.updateSteps(
-            _projectId,
-            amountSteps,
-            timeSteps,
-            rewardTimePerStep,
-            dateSteps,
-            isStepsPerProject,
-            startTime,
-            true
+            _projectId, amountSteps, timeSteps, rewardTimePerStep, dateSteps, isStepsPerProject, startTime, true
         );
     }
 }
