@@ -13,11 +13,9 @@ contract ProjectsKeeper {
         require(msg.sender == owner, "Only an owner");
         _;
     }
+
     modifier onlyApproved() {
-        require(
-            msg.sender == owner || msg.sender == creatorContractAddr,
-            "Only owner/approved!"
-        );
+        require(msg.sender == owner || msg.sender == creatorContractAddr, "Only owner/approved!");
         _;
     }
 
@@ -32,37 +30,27 @@ contract ProjectsKeeper {
     }
 
     // установка главного адреса, чтобы можно было через него делать транзы
-    function setCreatorContractAddr(
-        address _creatorContractAddr
-    ) public onlyOwner {
+    function setCreatorContractAddr(address _creatorContractAddr) public onlyOwner {
         creatorContractAddr = _creatorContractAddr;
     }
 
-    function getArrOfCreator(
-        address _creator
-    ) public view returns (uint32[] memory) {
+    function getArrOfCreator(address _creator) public view returns (uint32[] memory) {
         return projects[_creator];
     }
 
-    function deleteProject(
-        uint32 _projectId,
-        address _creator
-    ) public onlyApproved {
+    function deleteProject(uint32 _projectId, address _creator) public onlyApproved {
         uint32[] memory arr = projects[_creator];
-        uint length = arr.length;
+        uint256 length = arr.length;
 
-        uint indexToDelete = indexOfProject(arr, _projectId);
+        uint256 indexToDelete = indexOfProject(arr, _projectId);
         projects[_creator][indexToDelete] = projects[_creator][length - 1];
         projects[_creator].pop();
     }
 
-    function indexOfProject(
-        uint32[] memory _arrProjectIds,
-        uint32 _projectId
-    ) internal pure returns (uint) {
-        uint length = _arrProjectIds.length;
+    function indexOfProject(uint32[] memory _arrProjectIds, uint32 _projectId) internal pure returns (uint256) {
+        uint256 length = _arrProjectIds.length;
 
-        for (uint i = 0; i < length; i++) {
+        for (uint256 i = 0; i < length; i++) {
             if (_arrProjectIds[i] == _projectId) {
                 return i;
             }

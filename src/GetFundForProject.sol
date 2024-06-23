@@ -37,8 +37,8 @@ contract GetFundForProject {
         sbsFee = _sbsFee;
     }
 
-    event GetAllProjectTokens(address onwerProject, uint allProjectTokens);
-    event sendAllProjectTokensToSBS(address owner, uint allProjectTokens);
+    event GetAllProjectTokens(address onwerProject, uint256 allProjectTokens);
+    event sendAllProjectTokensToSBS(address owner, uint256 allProjectTokens);
 
     // поочередное получение проектом всех траншей
     function getNextFund(uint32 _projectId) public reentrancyGuard {
@@ -46,98 +46,58 @@ contract GetFundForProject {
         require(msg.sender == _owner, "You are not an owner");
         uint8 stepIsLive = createProject_contract.witchStepAlive(_projectId);
 
-        (
-            uint tokenSupply,
-            ,
-            uint minTokenSale,
-            ,
-            uint publicSale,
-            bool isProjectAlive,
-            ,
-            uint fundsForProject
-        ) = createProject_contract.projectsViewPrice(_projectId);
+        (uint256 tokenSupply,, uint256 minTokenSale,, uint256 publicSale, bool isProjectAlive,, uint256 fundsForProject)
+        = createProject_contract.projectsViewPrice(_projectId);
         require(isProjectAlive, "Project is over!");
 
-        (
-            uint8 amountSteps,
-            ,
-            ,
-            uint[] memory dateSteps,
-            ,
-            ,
-
-        ) = createProject_contract.projectsViewSteps(_projectId);
+        (uint8 amountSteps,,, uint256[] memory dateSteps,,,) = createProject_contract.projectsViewSteps(_projectId);
 
         require(tokenSupply >= minTokenSale, "Not enough funds!");
-        require(
-            stepIsLive < amountSteps && stepIsLive != 0,
-            "You've already got all your funds!"
-        ); // уточнить эту проверку
+        require(stepIsLive < amountSteps && stepIsLive != 0, "You've already got all your funds!"); // уточнить эту проверку
 
         uint32 votingTime = 604800;
         if (stepIsLive == 1) {
             require(
-                (block.timestamp < dateSteps[1] && tokenSupply == publicSale) ||
-                    (block.timestamp > dateSteps[stepIsLive]),
+                (block.timestamp < dateSteps[1] && tokenSupply == publicSale)
+                    || (block.timestamp > dateSteps[stepIsLive]),
                 "Sale is still ongoing"
             ); // если паблик закончился раньше времени - можно забрать первый транш
         } else {
-            require(
-                (block.timestamp > dateSteps[stepIsLive] + votingTime),
-                "The vote has not taken place yet"
-            ); // ?? нужно прибывать ещё время голосования 7 дней
+            require((block.timestamp > dateSteps[stepIsLive] + votingTime), "The vote has not taken place yet"); // ?? нужно прибывать ещё время голосования 7 дней
         }
         // текущий шаг ставим false следующий true
         createProject_contract.updateAfterSBSFund(_projectId, stepIsLive);
 
         // тут и выплата и уменьшение объема в меппинге
-        uint sbsFundForProject = fundsForProject / (amountSteps - 1);
-        uint sbsFeeReward = 0;
+        uint256 sbsFundForProject = fundsForProject / (amountSteps - 1);
+        uint256 sbsFeeReward = 0;
         if (sbsFee != 0) {
             sbsFeeReward = (sbsFundForProject / 100) * sbsFee;
             sbsFundForProject -= sbsFeeReward;
         }
-        ordering_contract.getFundByProject(
-            _projectId,
-            sbsFundForProject,
-            sbsFeeReward,
-            msg.sender
-        );
+        ordering_contract.getFundByProject(_projectId, sbsFundForProject, sbsFeeReward, msg.sender);
     }
 
     // получение проектом всех своих токенов после завершения SBSFund
     function getAllProjectTokens(uint32 _projectId) public {
-        (
-            uint amountSteps,
-            ,
-            ,
-            uint[] memory dateSteps,
-            ,
-            ,
+        (uint256 amountSteps,,, uint256[] memory dateSteps,,,) = createProject_contract.projectsViewSteps(_projectId);
 
-        ) = createProject_contract.projectsViewSteps(_projectId);
-
-        require(
-            block.timestamp > dateSteps[amountSteps],
-            "Project time isn't finish!"
-        );
+        require(block.timestamp > dateSteps[amountSteps], "Project time isn't finish!");
 
         (
-            uint tokenSupply,
-            uint maxTokenSupply,
-            uint minTokenSale,
+            uint256 tokenSupply,
+            uint256 maxTokenSupply,
+            uint256 minTokenSale,
             ,
-            uint publicSale,
+            uint256 publicSale,
             bool isProjectAlive,
             bool isProjectGetAllTokens,
-
         ) = createProject_contract.projectsViewPrice(_projectId);
         require(!isProjectGetAllTokens, "Project already got tokens!");
 
-        (ProjectToken projectContract, , , ) = createProject_contract
-            .projectsViewMain(_projectId);
+        (ProjectToken projectContract,,,) = createProject_contract.projectsViewMain(_projectId);
 
-        uint allProjectTokens = maxTokenSupply - publicSale;
+        uint256 allProjectTokens = maxTokenSupply - publicSale;
 
         if (msg.sender == owner) {
             require(!isProjectAlive, "Project is good!");

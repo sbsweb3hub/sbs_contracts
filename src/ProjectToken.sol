@@ -14,18 +14,13 @@ contract ProjectToken is ERC20 {
 
     modifier onlyApproved() {
         require(
-            msg.sender == owner ||
-                msg.sender == claimableAddr ||
-                msg.sender == tokensForProjectAddr,
+            msg.sender == owner || msg.sender == claimableAddr || msg.sender == tokensForProjectAddr,
             "Only owner/approved!"
         );
         _;
     }
 
-    function setClaimableAddrs(
-        address _claimableAddr,
-        address _tokensForProjectAddr
-    ) public onlyApproved {
+    function setClaimableAddrs(address _claimableAddr, address _tokensForProjectAddr) public onlyApproved {
         claimableAddr = _claimableAddr;
         tokensForProjectAddr = _tokensForProjectAddr;
     }
